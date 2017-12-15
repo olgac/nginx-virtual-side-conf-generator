@@ -1,0 +1,33 @@
+server {
+    listen 80 ;
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/example.com.pem;
+    ssl_certificate_key /etc/nginx/ssl/example.com.key;
+    server_name example.com;
+    root /srv/www/current/public;
+
+    access_log /srv/www/logs/access.log main;
+    error_log /srv/www/logs/error.log;
+    client_max_body_size 10M;
+
+    location / {
+        index index.html index.php;
+        try_files $uri $uri/ /index.php?$query_string;
+        expires 30d;
+    }
+
+    ## Leverage browser caching
+    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+        access_log        off;
+        log_not_found     off;
+        expires           30d;
+    }
+
+    location  /. {
+        return 404;
+    }
+
+    location ~ .php$ {
+        expires        off;
+    }
+}
